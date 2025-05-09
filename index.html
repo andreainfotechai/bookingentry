@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        /* Login Form Styles */
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        /* Receipt Form Styles */
+        .receipt-container {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .receipt-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .print-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background-color: #0b7dda;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Receipt Preview Styles */
+        .receipt-preview {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 1px dashed #ccc;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .receipt-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .receipt-header p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .receipt-details {
+            margin: 20px 0;
+        }
+
+        .receipt-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .receipt-details th, .receipt-details td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .receipt-details th {
+            background-color: #f9f9f9;
+        }
+
+        .receipt-footer {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt-preview, .receipt-preview * {
+                visibility: visible;
+            }
+            .receipt-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+            }
+            .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div class="login-container" id="loginContainer">
+            <h2>Hotel Management Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="loginBtn">Login</button>
+        </div>
+
+        <!-- Receipt Form -->
+        <div class="receipt-container" id="receiptContainer">
+            <h2>Guest Receipt</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomNo">Room No</label>
+                    <input type="text" id="roomNo" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType" required>
+                    <option value="">Select Room Type</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Deluxe">Deluxe</option>
+                    <option value="Suite">Suite</option>
+                    <option value="Executive">Executive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="guestName">Guest Name</label>
+                <input type="text" id="guestName" required>
+            </div>
+            <div class="form-group">
+                <label for="mobileNo">Mobile No</label>
+                <input type="tel" id="mobileNo" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (₹)</label>
+                <input type="number" id="amount" required>
+            </div>
+            <div class="action-buttons">
+                <button class="print-btn" id="generateBtn">Generate Receipt</button>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+
+        <!-- Receipt Preview -->
+        <div class="receipt-preview" id="receiptPreview">
+            <div class="receipt-header">
+                <h2>HOTEL GRAND PLAZA</h2>
+                <p>123 Main Street, City Center</p>
+                <p>Phone: +91 9876543210 | Email: info@grandplaza.com</p>
+                <p>GSTIN: 22AAAAA0000A1Z5</p>
+            </div>
+            <div class="receipt-details">
+                <table>
+                    <tr>
+                        <th>Receipt No:</th>
+                        <td id="receiptNo">001</td>
+                        <th>Date:</th>
+                        <td id="receiptDate">01/01/2023</td>
+                    </tr>
+                    <tr>
+                        <th>Guest Name:</th>
+                        <td id="previewGuestName">John Doe</td>
+                        <th>Mobile No:</th>
+                        <td id="previewMobileNo">9876543210</td>
+                    </tr>
+                    <tr>
+                        <th>Room No:</th>
+                        <td id="previewRoomNo">101</td>
+                        <th>Room Type:</th>
+                        <td id="previewRoomType">Deluxe</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="receipt-footer">
+                <p><strong>Total Amount: ₹<span id="previewAmount">2500</span></strong></p>
+                <p>Thank you for staying with us!</p>
+                <p>Signature: ___________________</p>
+            </div>
+            <div class="action-buttons">
+                <button class="print-btn" id="printBtn">Print Receipt</button>
+                <button class="whatsapp-btn" id="whatsappBtn">Share via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const receiptContainer = document.getElementById('receiptContainer');
+        const receiptPreview = document.getElementById('receiptPreview');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const printBtn = document.getElementById('printBtn');
+        const whatsappBtn = document.getElementById('whatsappBtn');
+
+        // Form Fields
+        const dateField = document.getElementById('date');
+        const roomNoField = document.getElementById('roomNo');
+        const roomTypeField = document.getElementById('roomType');
+        const guestNameField = document.getElementById('guestName');
+        const mobileNoField = document.getElementById('mobileNo');
+        const amountField = document.getElementById('amount');
+
+        // Preview Fields
+        const receiptNoField = document.getElementById('receiptNo');
+        const receiptDateField = document.getElementById('receiptDate');
+        const previewGuestName = document.getElementById('previewGuestName');
+        const previewMobileNo = document.getElementById('previewMobileNo');
+        const previewRoomNo = document.getElementById('previewRoomNo');
+        const previewRoomType = document.getElementById('previewRoomType');
+        const previewAmount = document.getElementById('previewAmount');
+
+        // Set current date as default
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            dateField.value = today;
+        };
+
+        // Login Functionality
+        loginBtn.addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Simple validation (in real app, this would check against a database)
+            if (username === 'admin' && password === 'admin') {
+                loginContainer.style.display = 'none';
+                receiptContainer.style.display = 'block';
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+
+        // Logout Functionality
+        logoutBtn.addEventListener('click', function() {
+            receiptContainer.style.display = 'none';
+            receiptPreview.style.display = 'none';
+            loginContainer.style.display = 'block';
+            
+            // Clear form fields
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            guestNameField.value = '';
+            mobileNoField.value = '';
+            roomNoField.value = '';
+            amountField.value = '';
+            roomTypeField.value = '';
+        });
+
+        // Generate Receipt
+        generateBtn.addEventListener('click', function() {
+            // Validate form
+            if (!dateField.value || !roomNoField.value || !roomTypeField.value || 
+                !guestNameField.value || !mobileNoField.value || !amountField.value) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            // Generate random receipt number
+            const receiptNo = 'RCP' + Math.floor(1000 + Math.random() * 9000);
+
+            // Format date for display
+            const formattedDate = new Date(dateField.value).toLocaleDateString('en-IN');
+
+            // Update preview
+            receiptNoField.textContent = receiptNo;
+            receiptDateField.textContent = formattedDate;
+            previewGuestName.textContent = guestNameField.value;
+            previewMobileNo.textContent = mobileNoField.value;
+            previewRoomNo.textContent = roomNoField.value;
+            previewRoomType.textContent = roomTypeField.value;
+            previewAmount.textContent = amountField.value;
+
+            // Show preview
+            receiptPreview.style.display = 'block';
+        });
+
+        // Print Receipt
+        printBtn.addEventListener('click', function() {
+            window.print();
+        });
+
+        // Share via WhatsApp
+        whatsappBtn.addEventListener('click', function() {
+            const receiptText = `*HOTEL GRAND PLAZA*\n\n` +
+                                `*Receipt No:* ${receiptNoField.textContent}\n` +
+                                `*Date:* ${receiptDateField.textContent}\n\n` +
+                                `*Guest Name:* ${previewGuestName.textContent}\n` +
+                                `*Mobile No:* ${previewMobileNo.textContent}\n` +
+                                `*Room No:* ${previewRoomNo.textContent}\n` +
+                                `*Room Type:* ${previewRoomType.textContent}\n\n` +
+                                `*Total Amount:* ₹${previewAmount.textContent}\n\n` +
+                                `Thank you for staying with us!`;
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(receiptText)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+    </script>
+</body>
+</html>
