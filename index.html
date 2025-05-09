@@ -4,517 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #333;
-            text-align: center;
-        }
-        .form-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .hidden {
-            display: none;
-        }
-        .receipt {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-top: 20px;
-            background-color: white;
-        }
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .receipt-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .receipt-footer {
-            margin-top: 20px;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-            text-align: right;
-        }
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .report-table th, .report-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .report-table th {
-            background-color: #f2f2f2;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        @media print {
-            .no-print {
-                display: none;
-            }
-            body {
-                background-color: white;
-                padding: 0;
-            }
-            .container {
-                box-shadow: none;
-                padding: 0;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Login Section -->
-        <div id="login-section" class="form-section">
-            <h1>Hotel Maneck Residency</h1>
-            <h2>Login</h2>
+    <div id="login-container" class="container">
+        <h1>Hotel Login</h1>
+        <form id="login-form">
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Enter username">
+                <input type="text" id="username" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" placeholder="Enter password">
+                <input type="password" id="password" required>
             </div>
-            <button id="login-btn">Login</button>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="main-container" class="container" style="display: none;">
+        <header>
+            <h1>Hotel Management System</h1>
+            <button id="logout-btn">Logout</button>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="receipt">New Receipt</button>
+            <button class="tab-btn" data-tab="reports">Reports</button>
         </div>
-
-        <!-- Main Application (hidden initially) -->
-        <div id="app-section" class="hidden">
-            <div class="nav-buttons no-print">
-                <button id="new-receipt-btn">New Receipt</button>
-                <button id="view-reports-btn">View Reports</button>
-                <button id="logout-btn">Logout</button>
-            </div>
-
-            <!-- Receipt Input Section -->
-            <div id="receipt-input-section" class="form-section">
-                <h2>Receipt Information</h2>
-                <div class="form-group">
-                    <label for="date">Date:</label>
-                    <input type="date" id="date">
-                </div>
-                <div class="form-group">
-                    <label for="roomno">Room Number:</label>
-                    <input type="text" id="roomno" placeholder="Enter room number">
-                </div>
-                <div class="form-group">
-                    <label for="roomtype">Room Type:</label>
-                    <select id="roomtype">
-                        <option value="">Select room type</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Deluxe">Deluxe</option>
-                        <option value="Suite">Suite</option>
-                        <option value="Executive">Executive</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="guestname">Guest Name:</label>
-                    <input type="text" id="guestname" placeholder="Enter guest name">
-                </div>
-                <div class="form-group">
-                    <label for="mobileno">Mobile Number:</label>
-                    <input type="text" id="mobileno" placeholder="Enter mobile number">
-                </div>
-                <div class="form-group">
-                    <label for="amount">Amount:</label>
-                    <input type="number" id="amount" placeholder="Enter amount">
-                </div>
-                <button id="generate-receipt-btn" class="no-print">Generate Receipt</button>
-            </div>
-
-            <!-- Receipt Display Section -->
-            <div id="receipt-display-section" class="hidden">
-                <div class="receipt" id="receipt-to-print">
-                    <div class="receipt-header">
-                        <h2>HOTEL MANECK RESIDENCY</h2>
-                        <p>LOWER BAZAAR</p>
-                        <p>OOTY</p>
+        
+        <div id="receipt-tab" class="tab-content active">
+            <form id="receipt-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" required>
                     </div>
-                    <div class="receipt-details">
-                        <div>
-                            <p><strong>Date:</strong> <span id="receipt-date"></span></p>
-                            <p><strong>Room No:</strong> <span id="receipt-roomno"></span></p>
-                            <p><strong>Room Type:</strong> <span id="receipt-roomtype"></span></p>
-                        </div>
-                        <div>
-                            <p><strong>Guest Name:</strong> <span id="receipt-guestname"></span></p>
-                            <p><strong>Mobile No:</strong> <span id="receipt-mobileno"></span></p>
-                            <p><strong>Receipt No:</strong> <span id="receipt-number"></span></p>
-                        </div>
-                    </div>
-                    <div>
-                        <p><strong>Amount:</strong> ₹<span id="receipt-amount"></span></p>
-                        <p><strong>Amount in Words:</strong> <span id="receipt-amount-words"></span></p>
-                    </div>
-                    <div class="receipt-footer">
-                        <p>Thank you for your stay!</p>
-                        <p>Signature: ________________</p>
+                    <div class="form-group">
+                        <label for="roomno">Room No:</label>
+                        <input type="text" id="roomno" required>
                     </div>
                 </div>
-                <div class="no-print" style="margin-top: 20px;">
-                    <button id="print-receipt-btn">Print Receipt</button>
-                    <button id="save-receipt-btn">Save Receipt</button>
-                </div>
-            </div>
-
-            <!-- Reports Section -->
-            <div id="reports-section" class="form-section hidden">
-                <h2>Reports</h2>
-                <div class="form-group">
-                    <label for="report-date-from">From Date:</label>
-                    <input type="date" id="report-date-from">
-                </div>
-                <div class="form-group">
-                    <label for="report-date-to">To Date:</label>
-                    <input type="date" id="report-date-to">
-                </div>
-                <button id="generate-report-btn">Generate Report</button>
                 
-                <div id="report-results" class="hidden">
-                    <h3>Receipts Report</h3>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Receipt No</th>
-                                <th>Room No</th>
-                                <th>Guest Name</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="report-data">
-                        </tbody>
-                    </table>
-                    <div style="margin-top: 20px;">
-                        <button id="print-report-btn" class="no-print">Print Report</button>
-                        <button id="export-report-btn" class="no-print">Export to CSV</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="roomtype">Room Type:</label>
+                        <select id="roomtype" required>
+                            <option value="">Select</option>
+                            <option value="Standard">Standard</option>
+                            <option value="Deluxe">Deluxe</option>
+                            <option value="Suite">Suite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" required>
                     </div>
                 </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="guestname">Guest Name:</label>
+                        <input type="text" id="guestname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobileno">Mobile No:</label>
+                        <input type="text" id="mobileno" required>
+                    </div>
+                </div>
+                
+                <button type="submit">Generate Receipt</button>
+            </form>
+            
+            <div id="receipt-preview" class="receipt">
+                <h2>HOTEL RECEIPT</h2>
+                <div class="receipt-info">
+                    <p><strong>Date:</strong> <span id="receipt-date"></span></p>
+                    <p><strong>Receipt No:</strong> <span id="receipt-no"></span></p>
+                </div>
+                <div class="receipt-details">
+                    <p><strong>Guest Name:</strong> <span id="receipt-guestname"></span></p>
+                    <p><strong>Mobile No:</strong> <span id="receipt-mobileno"></span></p>
+                    <p><strong>Room No:</strong> <span id="receipt-roomno"></span></p>
+                    <p><strong>Room Type:</strong> <span id="receipt-roomtype"></span></p>
+                    <p><strong>Amount:</strong> ₹<span id="receipt-amount"></span></p>
+                </div>
+                <div class="receipt-footer">
+                    <p>Thank you for staying with us!</p>
+                </div>
+                <button id="print-receipt" class="print-btn">Print Receipt</button>
             </div>
+        </div>
+        
+        <div id="reports-tab" class="tab-content">
+            <div class="report-controls">
+                <div class="form-group">
+                    <label for="report-date">Filter by Date:</label>
+                    <input type="date" id="report-date">
+                </div>
+                <button id="filter-reports">Filter</button>
+                <button id="clear-filter">Clear Filter</button>
+            </div>
+            
+            <table id="reports-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Receipt No</th>
+                        <th>Guest Name</th>
+                        <th>Mobile No</th>
+                        <th>Room No</th>
+                        <th>Room Type</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="reports-body">
+                    <!-- Reports will be populated here -->
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <script>
-        // Sample data storage (in a real app, you would use a database)
-        let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
-        let currentUser = null;
-        let receiptCounter = receipts.length > 0 ? Math.max(...receipts.map(r => parseInt(r.receiptNo))) : 0;
-
-        // DOM Elements
-        const loginSection = document.getElementById('login-section');
-        const appSection = document.getElementById('app-section');
-        const receiptInputSection = document.getElementById('receipt-input-section');
-        const receiptDisplaySection = document.getElementById('receipt-display-section');
-        const reportsSection = document.getElementById('reports-section');
-        const reportResults = document.getElementById('report-results');
-
-        // Login functionality
-        document.getElementById('login-btn').addEventListener('click', function() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Simple validation (in a real app, you would have proper authentication)
-            if (username && password) {
-                currentUser = username;
-                loginSection.classList.add('hidden');
-                appSection.classList.remove('hidden');
-                // Set current date as default
-                document.getElementById('date').valueAsDate = new Date();
-                document.getElementById('report-date-from').valueAsDate = new Date();
-                document.getElementById('report-date-to').valueAsDate = new Date();
-            } else {
-                alert('Please enter both username and password');
-            }
-        });
-
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            currentUser = null;
-            appSection.classList.add('hidden');
-            loginSection.classList.remove('hidden');
-            resetForms();
-        });
-
-        // Navigation buttons
-        document.getElementById('new-receipt-btn').addEventListener('click', function() {
-            receiptInputSection.style.display = 'block';
-            receiptDisplaySection.classList.add('hidden');
-            reportsSection.classList.add('hidden');
-            resetReceiptForm();
-        });
-
-        document.getElementById('view-reports-btn').addEventListener('click', function() {
-            receiptInputSection.style.display = 'none';
-            receiptDisplaySection.classList.add('hidden');
-            reportsSection.classList.remove('hidden');
-        });
-
-        // Generate receipt
-        document.getElementById('generate-receipt-btn').addEventListener('click', function() {
-            const date = document.getElementById('date').value;
-            const roomno = document.getElementById('roomno').value;
-            const roomtype = document.getElementById('roomtype').value;
-            const guestname = document.getElementById('guestname').value;
-            const mobileno = document.getElementById('mobileno').value;
-            const amount = document.getElementById('amount').value;
-
-            if (!date || !roomno || !roomtype || !guestname || !mobileno || !amount) {
-                alert('Please fill all fields');
-                return;
-            }
-
-            // Generate receipt number
-            receiptCounter++;
-            const receiptNo = 'R' + receiptCounter.toString().padStart(4, '0');
-
-            // Display receipt
-            document.getElementById('receipt-date').textContent = formatDate(date);
-            document.getElementById('receipt-roomno').textContent = roomno;
-            document.getElementById('receipt-roomtype').textContent = roomtype;
-            document.getElementById('receipt-guestname').textContent = guestname;
-            document.getElementById('receipt-mobileno').textContent = mobileno;
-            document.getElementById('receipt-number').textContent = receiptNo;
-            document.getElementById('receipt-amount').textContent = amount;
-            document.getElementById('receipt-amount-words').textContent = numberToWords(amount);
-
-            receiptInputSection.style.display = 'none';
-            receiptDisplaySection.classList.remove('hidden');
-
-            // Save receipt data (in memory)
-            const receiptData = {
-                receiptNo,
-                date,
-                roomno,
-                roomtype,
-                guestname,
-                mobileno,
-                amount,
-                createdBy: currentUser,
-                createdAt: new Date().toISOString()
-            };
-            
-            receipts.push(receiptData);
-            localStorage.setItem('receipts', JSON.stringify(receipts));
-        });
-
-        // Print receipt
-        document.getElementById('print-receipt-btn').addEventListener('click', function() {
-            window.print();
-        });
-
-        // Save receipt (just hides it in this demo)
-        document.getElementById('save-receipt-btn').addEventListener('click', function() {
-            receiptDisplaySection.classList.add('hidden');
-            receiptInputSection.style.display = 'block';
-            resetReceiptForm();
-        });
-
-        // Generate report
-        document.getElementById('generate-report-btn').addEventListener('click', function() {
-            const fromDate = document.getElementById('report-date-from').value;
-            const toDate = document.getElementById('report-date-to').value;
-            
-            if (!fromDate || !toDate) {
-                alert('Please select both date ranges');
-                return;
-            }
-            
-            const filteredReceipts = receipts.filter(receipt => {
-                const receiptDate = new Date(receipt.date);
-                const startDate = new Date(fromDate);
-                const endDate = new Date(toDate);
-                return receiptDate >= startDate && receiptDate <= endDate;
-            });
-            
-            displayReport(filteredReceipts);
-        });
-
-        // Print report
-        document.getElementById('print-report-btn').addEventListener('click', function() {
-            window.print();
-        });
-
-        // Export report to CSV
-        document.getElementById('export-report-btn').addEventListener('click', function() {
-            const fromDate = document.getElementById('report-date-from').value;
-            const toDate = document.getElementById('report-date-to').value;
-            const filteredReceipts = receipts.filter(receipt => {
-                const receiptDate = new Date(receipt.date);
-                const startDate = new Date(fromDate);
-                const endDate = new Date(toDate);
-                return receiptDate >= startDate && receiptDate <= endDate;
-            });
-            
-            exportToCSV(filteredReceipts);
-        });
-
-        // Helper functions
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
-        }
-
-        function resetForms() {
-            resetReceiptForm();
-            document.getElementById('report-data').innerHTML = '';
-            reportResults.classList.add('hidden');
-        }
-
-        function resetReceiptForm() {
-            document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('roomno').value = '';
-            document.getElementById('roomtype').value = '';
-            document.getElementById('guestname').value = '';
-            document.getElementById('mobileno').value = '';
-            document.getElementById('amount').value = '';
-        }
-
-        function displayReport(receiptsData) {
-            const reportBody = document.getElementById('report-data');
-            reportBody.innerHTML = '';
-            
-            if (receiptsData.length === 0) {
-                reportBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No receipts found for the selected period</td></tr>';
-            } else {
-                let totalAmount = 0;
-                
-                receiptsData.forEach(receipt => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${formatDate(receipt.date)}</td>
-                        <td>${receipt.receiptNo}</td>
-                        <td>${receipt.roomno}</td>
-                        <td>${receipt.guestname}</td>
-                        <td>₹${receipt.amount}</td>
-                    `;
-                    reportBody.appendChild(row);
-                    totalAmount += parseFloat(receipt.amount);
-                });
-                
-                // Add total row
-                const totalRow = document.createElement('tr');
-                totalRow.innerHTML = `
-                    <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                    <td><strong>₹${totalAmount.toFixed(2)}</strong></td>
-                `;
-                reportBody.appendChild(totalRow);
-            }
-            
-            reportResults.classList.remove('hidden');
-        }
-
-        function exportToCSV(receiptsData) {
-            if (receiptsData.length === 0) {
-                alert('No data to export');
-                return;
-            }
-            
-            let csv = 'Date,Receipt No,Room No,Guest Name,Amount\n';
-            
-            receiptsData.forEach(receipt => {
-                csv += `"${formatDate(receipt.date)}","${receipt.receiptNo}","${receipt.roomno}","${receipt.guestname}","${receipt.amount}"\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.setAttribute('href', url);
-            link.setAttribute('download', `hotel_receipts_${new Date().toISOString().slice(0,10)}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Function to convert numbers to words (simplified version)
-        function numberToWords(num) {
-            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-            const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-            
-            num = parseFloat(num);
-            if (num === 0) return 'Zero';
-            
-            let words = '';
-            if (num >= 1000) {
-                words += ones[Math.floor(num / 1000)] + ' Thousand ';
-                num %= 1000;
-            }
-            
-            if (num >= 100) {
-                words += ones[Math.floor(num / 100)] + ' Hundred ';
-                num %= 100;
-            }
-            
-            if (num >= 20) {
-                words += tens[Math.floor(num / 10)] + ' ';
-                num %= 10;
-            } else if (num >= 10) {
-                words += teens[num - 10] + ' ';
-                num = 0;
-            }
-            
-            if (num > 0) {
-                words += ones[num] + ' ';
-            }
-            
-            return words.trim() + ' Rupees Only';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
